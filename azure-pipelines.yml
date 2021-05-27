@@ -12,7 +12,7 @@ variables:
   dotnetSdkVersion: '3.1.100'
 
 jobs: 
-- job: "Bypass-parallelism-requirement"
+- job: "Bypass_parallelism_requirement"
   steps:
   - task: UseDotNet@2
     displayName: 'Use .NET Core SDK $(dotnetSdkVersion)'

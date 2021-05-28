@@ -14,6 +14,8 @@ variables:
 jobs: 
 - job: Bypass_parallelism
   steps:
+  strategy:
+    maxParallel: 0
   - task: UseDotNet@2
     displayName: 'Use .NET Core SDK $(dotnetSdkVersion)'
     inputs:
@@ -21,6 +23,8 @@ jobs:
 
 - job: Run_npm
   dependsOn: Bypass_parallelism
+  strategy:
+    maxParallel: 0
   steps:
   - task: Npm@1
     displayName: 'Run npm install'
@@ -29,18 +33,24 @@ jobs:
 
 - job: Sass_Script
   dependsOn: Run_npm
+  strategy:
+    maxParallel: 0
   steps:   
   - script: './node_modules/.bin/node-sass $(wwwrootDir) --output $(wwwrootDir)'
     displayName: 'Compile Sass assets'
 
 - job: Run_gulp
   dependsOn: Sass_Script
+  strategy:
+    maxParallel: 0
   steps:
   - task: gulp@1
     displayName: 'Run gulp tasks'
 
 - job: Write_build
   dependsOn: Run_gulp
+  strategy:
+    maxParallel: 0
   steps: 
   - script: 'echo "$(Build.DefinitionName), $(Build.BuildId), $(Build.BuildNumber)" > buildinfo.txt'
     displayName: 'Write build info'
@@ -48,6 +58,8 @@ jobs:
 
 - job: Restore_dependencies
   dependsOn: Write_build
+  strategy:
+    maxParallel: 0
   steps:
   - task: DotNetCoreCLI@2
     displayName: 'Restore project dependencies'
@@ -57,6 +69,8 @@ jobs:
 
 - job: Build_project
   dependsOn: Restore_dependencies
+  strategy:
+    maxParallel: 0
   steps:
   - task: DotNetCoreCLI@2
     displayName: 'Build the project - $(buildConfiguration)'
@@ -67,6 +81,8 @@ jobs:
 
 - job: Publish_project
   dependsOn: Build_project
+  strategy:
+    maxParallel: 0
   steps:
   - task: DotNetCoreCLI@2
     displayName: 'Publish the project - $(buildConfiguration)'
@@ -79,6 +95,8 @@ jobs:
 
 - job: Publish_Artifact
   dependsOn: Publish_project
+  strategy:
+    maxParallel: 0
   steps:
   - task: PublishBuildArtifacts@1
     displayName: 'Publish Artifact: drop'

@@ -13,9 +13,9 @@ variables:
 
 jobs: 
 - job: Bypass_parallelism
-  steps:
   strategy:
     maxParallel: 0
+  steps:  
   - task: UseDotNet@2
     displayName: 'Use .NET Core SDK $(dotnetSdkVersion)'
     inputs:
